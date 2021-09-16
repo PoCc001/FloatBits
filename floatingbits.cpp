@@ -17,6 +17,34 @@ inline int fb_abort() {
 	return EXIT_SUCCESS;
 }
 
+inline std::size_t precision(std::uint64_t ui) noexcept {
+	std::size_t c = 0;
+
+	for (; c < 64; ++c) {
+		if ((1ULL << (63 - c)) & ui) {
+			return (64 - c);
+		}
+	}
+
+	return 0;
+}
+
+inline std::string binaryString(std::uint64_t ui) {
+	std::size_t s = precision(ui);
+
+	if (ui == 0ULL) {
+		return "0";
+	}
+
+	std::string str{};
+
+	for (std::size_t i = 0; i < s; ++i) {
+		str += ((1ULL << (s - i - 1)) & ui) ? "1" : "0";
+	}
+
+	return str;
+}
+
 union float_i64 {
 	double f;
 	std::uint64_t i;
@@ -93,7 +121,10 @@ int main() {
 			fi.f = f;
 
 			std::cout << "\n" << std::endl;
-			std::printf("%x\n", fi.i);
+			std::printf("Bin: %s\n", binaryString(fi.i).c_str());
+			std::printf("Oct: %lo\n", fi.i);
+			std::printf("Dec: %lu\n", fi.i);
+			std::printf("Hex: %lx\n", fi.i);
 		}
 		else if (choice == 2) {
 			std::string s;
@@ -105,7 +136,10 @@ int main() {
 			fi.f = f;
 
 			std::cout << "\n" << std::endl;
-			std::printf("%llx\n", fi.i);
+			std::printf("Bin: %s\n", binaryString(fi.i).c_str());
+			std::printf("Oct: %llo\n", fi.i);
+			std::printf("Dec: %llu\n", fi.i);
+			std::printf("Hex: %llx\n", fi.i);
 		}
 		else {
 			return fb_abort();
